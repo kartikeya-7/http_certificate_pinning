@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
@@ -14,18 +15,23 @@ class SecureHttpClient extends http.BaseClient {
 
   Future<String>? secure = Future.value('');
 
-  SecureHttpClient._internal(
-      {required this.allowedSHAFingerprints, http.BaseClient? customClient}) {
+  SecureHttpClient._internal({
+    required this.allowedSHAFingerprints,
+    http.BaseClient? customClient,
+  }) {
     if (customClient != null) {
       _client = customClient;
     }
   }
 
-  factory SecureHttpClient.build(List<String> allowedSHAFingerprints,
-      {http.BaseClient? customClient}) {
+  factory SecureHttpClient.build(
+    List<String> allowedSHAFingerprints, {
+    http.BaseClient? customClient,
+  }) {
     return SecureHttpClient._internal(
-        allowedSHAFingerprints: allowedSHAFingerprints,
-        customClient: customClient);
+      allowedSHAFingerprints: allowedSHAFingerprints,
+      customClient: customClient,
+    );
   }
 
   Future<Response> head(url, {Map<String, String>? headers}) =>
@@ -34,21 +40,33 @@ class SecureHttpClient extends http.BaseClient {
   Future<Response> get(url, {Map<String, String>? headers}) =>
       _sendUnstreamed("GET", url, headers);
 
-  Future<Response> post(url,
-          {Map<String, String>? headers, body, Encoding? encoding}) =>
-      _sendUnstreamed("POST", url, headers, body, encoding);
+  Future<Response> post(
+    url, {
+    Map<String, String>? headers,
+    body,
+    Encoding? encoding,
+  }) => _sendUnstreamed("POST", url, headers, body, encoding);
 
-  Future<Response> put(url,
-          {Map<String, String>? headers, body, Encoding? encoding}) =>
-      _sendUnstreamed("PUT", url, headers, body, encoding);
+  Future<Response> put(
+    url, {
+    Map<String, String>? headers,
+    body,
+    Encoding? encoding,
+  }) => _sendUnstreamed("PUT", url, headers, body, encoding);
 
-  Future<Response> patch(url,
-          {Map<String, String>? headers, body, Encoding? encoding}) =>
-      _sendUnstreamed("PATCH", url, headers, body, encoding);
+  Future<Response> patch(
+    url, {
+    Map<String, String>? headers,
+    body,
+    Encoding? encoding,
+  }) => _sendUnstreamed("PATCH", url, headers, body, encoding);
 
-  Future<Response> delete(url,
-          {Map<String, String>? headers, body, Encoding? encoding}) =>
-      _sendUnstreamed("DELETE", url, headers, body, encoding);
+  Future<Response> delete(
+    url, {
+    Map<String, String>? headers,
+    body,
+    Encoding? encoding,
+  }) => _sendUnstreamed("DELETE", url, headers, body, encoding);
 
   Future<String> read(url, {Map<String, String>? headers}) {
     return get(url, headers: headers).then((response) {
@@ -68,15 +86,18 @@ class SecureHttpClient extends http.BaseClient {
 
   /// Sends a non-streaming [Request] and returns a non-streaming [Response].
   Future<Response> _sendUnstreamed(
-      String method, url, Map<String, String>? headers,
-      [body, Encoding? encoding]) async {
-
+    String method,
+    url,
+    Map<String, String>? headers, [
+    body,
+    Encoding? encoding,
+  ]) async {
     // iOS bug: Alamofire is failing to return parallel requests for certificate validation
     if (Platform.isIOS && secure != null) {
       await secure;
     }
 
-    secure =  HttpCertificatePinning.check(
+    secure = HttpCertificatePinning.check(
       serverURL: url.toString(),
       headerHttp: {},
       sha: SHA.SHA256,

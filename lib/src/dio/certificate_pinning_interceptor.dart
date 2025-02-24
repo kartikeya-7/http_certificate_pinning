@@ -15,10 +15,9 @@ class CertificatePinningInterceptor extends Interceptor {
     List<String>? allowedSHAFingerprints,
     int timeout = 0,
     this.callFollowingErrorInterceptor = false,
-  })  : _allowedSHAFingerprints = allowedSHAFingerprints != null
-            ? allowedSHAFingerprints
-            : <String>[],
-        _timeout = timeout;
+  }) : _allowedSHAFingerprints =
+           allowedSHAFingerprints != null ? allowedSHAFingerprints : <String>[],
+       _timeout = timeout;
 
   @override
   Future onRequest(
@@ -63,15 +62,19 @@ class CertificatePinningInterceptor extends Interceptor {
 
       if (e is PlatformException && e.code == 'CONNECTION_NOT_SECURE') {
         error = const CertificateNotVerifiedException();
+      } else if (e is PlatformException && e.code == 'NO_INTERNET') {
+        return handler.reject(
+          DioException.connectionError(
+            requestOptions: options,
+            reason: 'NO_INTERNET',
+          ),
+        );
       } else {
         error = CertificateCouldNotBeVerifiedException(e);
       }
 
       handler.reject(
-        DioException(
-          requestOptions: options,
-          error: error,
-        ),
+        DioException(requestOptions: options, error: error),
         callFollowingErrorInterceptor,
       );
     }
