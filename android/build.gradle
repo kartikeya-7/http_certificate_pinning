@@ -1,5 +1,5 @@
 group = "diefferson.http_certificate_pinning"
-version = "3.0.0"
+version = "3.0.2"
 
 buildscript {
     ext.kotlin_version = '2.1.10'
@@ -27,9 +27,7 @@ apply plugin: "kotlin-android"
 android {
     compileSdk 35
     namespace = "diefferson.http_certificate_pinning"
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-    }
+
     compileOptions{
         sourceCompatibility JavaVersion.VERSION_21
         targetCompatibility JavaVersion.VERSION_21
@@ -44,32 +42,15 @@ android {
     lintOptions {
         disable 'InvalidPackage'
     }
-}
 
-    compileSdk = 34
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
-    }
 
     sourceSets {
         main.java.srcDirs += "src/main/kotlin"
         test.java.srcDirs += "src/test/kotlin"
     }
 
-    defaultConfig {
-        minSdk = 21
-    }
 
-    dependencies {
-        testImplementation("org.jetbrains.kotlin:kotlin-test")
-        testImplementation("org.mockito:mockito-core:5.0.0")
-    }
+
 
     testOptions {
         unitTests.all {
@@ -82,4 +63,9 @@ android {
             }
         }
     }
+}
+
+dependencies {
+        testImplementation("org.jetbrains.kotlin:kotlin-test")
+        testImplementation("org.mockito:mockito-core:5.0.0")
 }
